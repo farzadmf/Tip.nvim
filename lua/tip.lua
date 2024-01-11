@@ -2,8 +2,8 @@ local M = {}
 
 ---@class Tip.config
 ---@field seconds number
----@field title string
----@field url string
+---@field title? string
+---@field url? string
 
 ---@type Tip.config
 M.config = {
@@ -19,22 +19,24 @@ M.setup = function(params)
   M.config = vim.tbl_deep_extend('force', {}, M.config, params or {})
   vim.api.nvim_create_autocmd('VimEnter', {
     callback = function()
-      local job = require 'plenary.job'
+      vim.schedule(function()
+        local job = require 'plenary.job'
 
-      job
-        :new({
-          command = 'curl',
-          args = { M.config.url },
-          on_exit = function(j, exit_code)
-            local res = table.concat(j:result())
-            if exit_code ~= 0 then
-              res = 'Error fetching tip: ' .. res
-            end
+        job
+          :new({
+            command = 'curl',
+            args = { M.config.url },
+            on_exit = function(j, exit_code)
+              local res = table.concat(j:result())
+              if exit_code ~= 0 then
+                res = 'Error fetching tip: ' .. res
+              end
 
-            pcall(vim.notify, res, M.config.seconds, { title = M.config.title })
-          end,
-        })
-        :start()
+              pcall(vim.notify, res, M.config.seconds, { title = M.config.title })
+            end,
+          })
+          :start()
+      end)
     end,
   })
 end
