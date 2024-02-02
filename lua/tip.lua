@@ -32,6 +32,11 @@ M.setup = function(params)
                 res = 'Error fetching tip: ' .. res
               end
 
+              -- Ignore '502 Bad Gateway'
+              if string.match(res, 'Bad Gateway') then
+                return
+              end
+
               pcall(vim.notify, res, M.config.seconds, { title = M.config.title })
             end,
           })
