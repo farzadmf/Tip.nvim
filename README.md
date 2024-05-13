@@ -23,7 +23,12 @@ return {
       seconds = 2,
       title = "Tip!",
       url = "https://vtip.43z.one",
+      display_on_startup = false,
     })
   end,
 }
 ```
+
+A new command (`Tip`) is created to allow displaying a tip on-demand.
+
+If `display_on_startup` is set, the tip is shown when Neovim is opened.
